@@ -13,5 +13,5 @@ Written by toem for [ZBW's automatic subject indexing working group](https://www
 1. Finally, adapt and run the control scripts: [link](control).
 
 Training and application are based on simple file formats, in particular tab-separated values.
-For details, please have a look at the [basic test class](src/main/java/eu/zbw/a1/mausi/MausiBasicTest.java) and the corresponding 
+For details, please have a look at the [basic test class](src/test/java/eu/zbw/a1/mausi/MausiBasicTest.java) and the corresponding 
 files [here](src/test/resources).
