@@ -1,0 +1,17 @@
+target
+.classpath
+.settings
+.project
+src/main/java/sandbox
+src/main/java/sandbox/**
+src/main/resources/sandbox
+src/main/resources/sandbox/**
+out
+out/**
+control/out
+control/out/**
+tmp
+tmp/**
+dependency-reduced-pom.xml
+**/labels.csv.gzip
+**/*.maui_model
