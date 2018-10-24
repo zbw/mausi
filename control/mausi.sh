@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# mausi -- AUtoMatic Indexing System
+# mausi
 #
 # example call
 #

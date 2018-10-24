@@ -2,10 +2,10 @@
 * zaptain-mausi | Maui-Wrapper for short-text based STW subject indexing
 * Copyright (C) 2016-2018  Martin Toepfer | ZBW -- Leibniz Information Centre for Economics
 * 
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
 * 
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of

@@ -15,23 +15,35 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package eu.zbw.a1.mausi.kb;
+package eu.zbw.a1.mausi;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+public class StwAnnotation {
 
-public class STW {
+  public final int begin;
 
-  public static String NS_STW = "http://zbw.eu/stw";
+  public final int end;
 
-  public static String NS_ZBWEXT = "http://zbw.eu/namespaces/zbw-extensions/";
+  public final String cid;
 
-  private static Model m_model = ModelFactory.createDefaultModel();
+  public final String matchingText;
 
-  public static final Property descriptor = m_model.createProperty(NS_ZBWEXT + "Descriptor");
+  /**
+   * @param cid
+   *          concept id
+   * @param begin
+   *          offset
+   * @param end
+   *          offset + length
+   */
+  public StwAnnotation(String cid, String matchingText, final int begin, final int end) {
+    this.cid = cid;
+    this.matchingText = matchingText;
+    this.begin = begin;
+    this.end = end;
+  }
 
-  public static final RDFNode thsys = m_model.createResource(NS_ZBWEXT + "Thsys");
-
+  @Override
+  public String toString() {
+    return String.format("[%s, \"%s\", %d, %d]", cid, matchingText, begin, end);
+  }
 }

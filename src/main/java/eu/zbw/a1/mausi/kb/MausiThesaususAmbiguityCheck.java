@@ -2,9 +2,9 @@
 * zaptain-mausi | Maui-Wrapper for short-text based STW subject indexing
 * Copyright (C) 2016-2018  Martin Toepfer | ZBW -- Leibniz Information Centre for Economics
 * 
-* This program is free software; you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by 
-* the Free Software Foundation; either version 2 of the License, or 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
 * This program is distributed in the hope that it will be useful,
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -33,7 +32,6 @@ import com.entopix.maui.stopwords.StopwordsEnglish;
 import com.entopix.maui.util.Candidate;
 import com.entopix.maui.vocab.Vocabulary;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 /**
  * This AmbiguityCheck main method determines labels of the thesaurus, that have multiple meanings,
@@ -75,37 +73,37 @@ public class MausiThesaususAmbiguityCheck {
       maufi.setVocabulary(voc);
       maufi.setMaxPhraseLength(3);
 
-      // processExamples(voc, maufi);
+      processExamples(voc, maufi);
 
-      System.out.println("------------------------------------");
-      List<RDFNode> descriptors = kb.getDescriptors();
-      System.out.printf("Thesaurus has # %d descriptors%n", descriptors.size());
-      for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
-        RDFNode descriptor = (RDFNode) iterator.next();
-        String cref = descriptor.toString();
-        String cid = MausiThesaurus.resource2cid(cref);
-        List<String> labels = kb.getLabels(descriptor, "en");
-        System.out.printf("C:%s [%s]%n", cid, String.join(", ", labels));
-
-        for (Iterator iterator2 = labels.iterator(); iterator2.hasNext();) {
-          String phrase = (String) iterator2.next();
-          HashMap<String, Candidate> candidates = maufi.getCandidates(phrase);
-          if (candidates.size() > 1) {
-
-            System.out.printf("  \"%s\" -> \"%s\" has %d meanings:%n", phrase,
-                    voc.pseudoPhrase(phrase), candidates.size());
-            for (Entry<String, Candidate> entry : candidates.entrySet()) {
-              Candidate candidate = entry.getValue();
-              String cref2 = candidate.getName();
-              String cid2 = MausiThesaurus.resource2cid(cref2);
-              System.out.printf("   $ %s | %s (%s)%n", candidate.getTitle(),
-                      candidate.getBestFullForm(), cid);
-            }
-          }
-        }
-
-        // voc.toString()
-      }
+      // System.out.println("------------------------------------");
+      // List<RDFNode> descriptors = kb.getDescriptors();
+      // System.out.printf("Thesaurus has # %d descriptors%n", descriptors.size());
+      // for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
+      // RDFNode descriptor = (RDFNode) iterator.next();
+      // String cref = descriptor.toString();
+      // String cid = MausiThesaurus.resource2cid(cref);
+      // List<String> labels = kb.getLabels(descriptor, "en");
+      // System.out.printf("C:%s [%s]%n", cid, String.join(", ", labels));
+      //
+      // for (Iterator iterator2 = labels.iterator(); iterator2.hasNext();) {
+      // String phrase = (String) iterator2.next();
+      // HashMap<String, Candidate> candidates = maufi.getCandidates(phrase);
+      // if (candidates.size() > 1) {
+      //
+      // System.out.printf(" \"%s\" -> \"%s\" has %d meanings:%n", phrase,
+      // voc.pseudoPhrase(phrase), candidates.size());
+      // for (Entry<String, Candidate> entry : candidates.entrySet()) {
+      // Candidate candidate = entry.getValue();
+      // String cref2 = candidate.getName();
+      // String cid2 = MausiThesaurus.resource2cid(cref2);
+      // System.out.printf(" $ %s | %s (%s)%n", candidate.getTitle(),
+      // candidate.getBestFullForm(), cid);
+      // }
+      // }
+      // }
+      //
+      // // voc.toString()
+      // }
     }
   }
 
@@ -118,7 +116,8 @@ public class MausiThesaususAmbiguityCheck {
     // for (Entry<String, Candidate> entry : candidates.entrySet()) {
     // System.out.println(entry);
     // }
-    List<String> examples = Arrays.asList("fertilizer", "salt", "Germany", "Germany until 1945");
+    List<String> examples = Arrays.asList("fertilizer", "salt", "Germany", "Germany until 1945",
+            "Tax and the Tax Policy. Some Money Markets");
     for (String phrase : examples) {
       // System.out.printf("ambiguous, \"%s\"? %b%n", phrase, voc.isAmbiguous(phrase));
       // ArrayList<String> meanings = voc.getSenses(phrase);
@@ -137,8 +136,26 @@ public class MausiThesaususAmbiguityCheck {
         Candidate candidate = entry.getValue();
         String cref = candidate.getName();
         String cid = cref.substring(cref.lastIndexOf("/") + 1);
-        System.out.printf("  $ %s | %s (%s)%n", candidate.getTitle(), candidate.getBestFullForm(),
-                cid);
+
+        String fullForm = candidate.getBestFullForm();
+        String extracted = "-ERR-";
+
+        int iFirstOccurrence = phrase.indexOf(fullForm);
+        int iLastOccurrence = iFirstOccurrence + fullForm.length();
+
+        double fFirstOccurrence = candidate.getFirstOccurrence();
+        double fLastOccurrence = candidate.getLastOccurrence();
+        // int iFirstOccurrence = (int) (phrase.length() * fFirstOccurrence);
+        // int iLastOccurrence = (int) (phrase.length() * fLastOccurrence);
+        if (iLastOccurrence > iFirstOccurrence) {
+          extracted = phrase.substring(iFirstOccurrence, iLastOccurrence);
+        } else {
+        }
+
+        System.out.printf("  $ %s | %s (%s) | %f-%f (%d-%d, %s)%n", candidate.getTitle(), fullForm,
+                cid, fFirstOccurrence, fLastOccurrence, iFirstOccurrence, iLastOccurrence,
+                extracted);
+        // System.out.printf(" %s%n", candidate.getInfo());
       }
     }
   }

@@ -2,9 +2,9 @@
 * zaptain-mausi | Maui-Wrapper for short-text based STW subject indexing
 * Copyright (C) 2016-2018  Martin Toepfer | ZBW -- Leibniz Information Centre for Economics
 * 
-* This program is free software; you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by 
-* the Free Software Foundation; either version 2 of the License, or 
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
 * 
 * This program is distributed in the hope that it will be useful,
@@ -69,6 +69,11 @@ public class MausiThesaurus implements Closeable {
     Property p = getModel().createProperty(OWL.NS, "deprecated");
     NodeIterator iterator = getModel().listObjectsOfProperty(res, p);
     return iterator.hasNext();
+  }
+
+  public boolean isDesriptor(String cref) {
+    // TODO fix quick hack
+    return cref.contains("descriptor");
   }
 
   public String prefLabelEn(String conceptId) {
@@ -162,6 +167,11 @@ public class MausiThesaurus implements Closeable {
     return ls;
   }
 
+  @Override
+  public void close() throws IOException {
+    this.model.close();
+  }
+
   public static MausiThesaurus createMausiThesaurusByLocByEnv() {
     return new MausiThesaurus(getStwLocByEnv());
   }
@@ -171,6 +181,10 @@ public class MausiThesaurus implements Closeable {
   }
 
   public static Path getStwLocByEnv(String ext) {
+    String sPth = System.getenv("STW_PTH");
+    if (sPth != null) {
+      return Paths.get(sPth);
+    }
     String stwdir = System.getenv("STW_DIR");
     return Paths.get(stwdir, "stw." + ext);
   }
@@ -206,11 +220,6 @@ public class MausiThesaurus implements Closeable {
 
       return voc;
     }
-  }
-
-  @Override
-  public void close() throws IOException {
-    this.model.close();
   }
 
 }
